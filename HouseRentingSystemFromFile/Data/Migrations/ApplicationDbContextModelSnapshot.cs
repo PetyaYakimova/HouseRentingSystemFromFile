@@ -8,7 +8,7 @@ using System;
 
 namespace HouseRentingSystemFromFile.Data.Migrations
 {
-	[DbContext(typeof(ApplicationDbContext))]
+	[DbContext(typeof(HouseRentingDbContext))]
 	partial class ApplicationDbContextModelSnapshot : ModelSnapshot
 	{
 		protected override void BuildModel(ModelBuilder modelBuilder)
