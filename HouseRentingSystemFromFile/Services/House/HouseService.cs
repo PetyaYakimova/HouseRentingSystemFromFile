@@ -1,6 +1,7 @@
 ﻿using HouseRentingSystemFromFile.Contracts.House;
 using HouseRentingSystemFromFile.Data;
 using HouseRentingSystemFromFile.Infrastructure;
+using HouseRentingSystemFromFile.Models.Agent;
 using HouseRentingSystemFromFile.Models.House;
 using Microsoft.EntityFrameworkCore;
 
@@ -144,6 +145,130 @@ namespace HouseRentingSystemFromFile.Services.House
                 .ToListAsync();
 
             return ProjectToModel(houses);
+        }
+
+        public async Task<bool> Exists(int id)
+        {
+            return await _data
+                .Houses
+                .AnyAsync(h => h.Id == id);
+        }
+
+        public async Task<HouseDetailsServiceModel?> HouseDetailsById(int id)
+        {
+            return await _data
+                .Houses
+                .Where(h => h.Id == id)
+                .Select(h => new HouseDetailsServiceModel()
+                {
+                    Id = h.Id,
+                    Title = h.Title,
+                    Address = h.Address,
+                    Description = h.Description,
+                    ImageUrl = h.ImageUrl,
+                    PricePerMonth = h.PricePerMonth,
+                    IsRented = h.RenterId != null,
+                    Category = h.Category.Name,
+                    Agent = new AgentServiceModel()
+                    {
+                        PhoneNumber = h.Agent.PhoneNumber,
+                        Email = h.Agent.User.Email
+                    }
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task Edit(int houseId, string title, string address, string description, string imageUrl, decimal price,
+            int categoryId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+
+            if (house != null)
+            {
+                house.Title = title;
+                house.Address = address;
+                house.Description = description;
+                house.ImageUrl = imageUrl;
+                house.PricePerMonth = price;
+                house.CategoryId = categoryId;
+
+                await _data.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> HasAgentWithId(int houseId, string currentUserId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+            if (house == null)
+            {
+                return false;
+            }
+
+            var agent = await _data.Agents.FirstOrDefaultAsync(a => a.Id == house.AgentId);
+
+            if (agent == null)
+            {
+                return false;
+            }
+
+            if (agent.UserId != currentUserId)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<int> GetHouseCategoryId(int houseId)
+        {
+            return (await _data.Houses.FindAsync(houseId)).CategoryId;
+        }
+
+        public async Task Delete(int houseId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+
+            if (house != null)
+            {
+                _data.Remove(house);
+
+                await _data.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> IsRented(int id)
+        {
+            var house = await _data.Houses.FindAsync(id);
+            var result = house.RenterId != null;
+            return result;
+        }
+
+        public async Task<bool> IsRentedByUserWithId(int houseId, string userId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+
+            if (house == null)
+            {
+                return false;
+            }
+
+            return house.RenterId == userId;
+        }
+
+        public async Task Rent(int houseId, string userId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+
+            house.RenterId = userId;
+            await _data.SaveChangesAsync();
+        }
+
+        public async Task Leave(int houseId)
+        {
+            var house = await _data.Houses.FindAsync(houseId);
+
+            house.RenterId = null;
+            await _data.SaveChangesAsync();
         }
 
         private List<HouseServiceModel> ProjectToModel(List<Data.Models.House> houses)
