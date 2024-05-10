@@ -13,6 +13,8 @@
 		public const int DescriptionMinLength = 50;
 		public const int DescriptionMaxLength = 500;
 
+        public const double MxPricePerMonth = 3000.00;
+
 		public const int PhoneNumberMinLength = 7;
 		public const int PhoneNumberMaxLength = 15;
 	}
