@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HouseRentingSystemFromFile.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace HouseRentingSystemFromFile.Models.House
 {
-    public class HouseServiceModel
+    public class HouseServiceModel : IHouseModel
     {
         public int Id { get; set; }
 
