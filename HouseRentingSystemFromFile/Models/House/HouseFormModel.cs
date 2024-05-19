@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HouseRentingSystemFromFile.Contracts;
+using System.ComponentModel.DataAnnotations;
 using static HouseRentingSystemFromFile.Data.DataConstants;
 
 namespace HouseRentingSystemFromFile.Models.House
 {
-	public class HouseFormModel
+	public class HouseFormModel : IHouseModel
     {
         [Required]
         [StringLength(TitleMaxLength, MinimumLength = TitleMinLength)]
