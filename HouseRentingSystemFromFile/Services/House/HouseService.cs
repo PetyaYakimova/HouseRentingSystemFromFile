@@ -18,16 +18,18 @@ namespace HouseRentingSystemFromFile.Services.House
 
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
         {
-            return _data
+            return await _data
                 .Houses
                 .OrderByDescending(c => c.Id)
                 .Select(c => new HouseIndexServiceModel()
                 {
                     Id = c.Id,
                     Title = c.Title,
-                    ImageUrl = c.ImageUrl
+                    ImageUrl = c.ImageUrl,
+                    Address = c.Address
                 })
-                .Take(3);
+                .Take(3)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<HouseCategoryServiceModel>> AllCategories()
