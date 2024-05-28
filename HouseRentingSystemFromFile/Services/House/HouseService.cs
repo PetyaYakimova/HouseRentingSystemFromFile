@@ -1,4 +1,5 @@
-﻿using HouseRentingSystemFromFile.Contracts.House;
+﻿using HouseRentingSystemFromFile.Contracts.ApplicationUser;
+using HouseRentingSystemFromFile.Contracts.House;
 using HouseRentingSystemFromFile.Data;
 using HouseRentingSystemFromFile.Infrastructure;
 using HouseRentingSystemFromFile.Models.Agent;
@@ -10,10 +11,13 @@ namespace HouseRentingSystemFromFile.Services.House
     public class HouseService : IHouseService
     {
         private readonly HouseRentingDbContext _data;
+        private readonly IApplicationUserService _user;
 
-        public HouseService(HouseRentingDbContext data)
+        public HouseService(HouseRentingDbContext data,
+            IApplicationUserService user)
         {
             _data = data;
+            _user = user;
         }
 
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
@@ -158,7 +162,7 @@ namespace HouseRentingSystemFromFile.Services.House
 
         public async Task<HouseDetailsServiceModel?> HouseDetailsById(int id)
         {
-            return await _data
+            var result =  await _data
                 .Houses
                 .Where(h => h.Id == id)
                 .Select(h => new HouseDetailsServiceModel()
@@ -173,11 +177,14 @@ namespace HouseRentingSystemFromFile.Services.House
                     Category = h.Category.Name,
                     Agent = new AgentServiceModel()
                     {
+                        FullName = _user.UserFullName(h.Agent.UserId).Result,
                         PhoneNumber = h.Agent.PhoneNumber,
                         Email = h.Agent.User.Email
                     }
                 })
                 .FirstOrDefaultAsync();
+
+            return result;
         }
 
         public async Task Edit(int houseId, string title, string address, string description, string imageUrl, decimal price,
