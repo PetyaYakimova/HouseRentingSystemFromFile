@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystemFromFile.Data
 {
-	public class HouseRentingDbContext : IdentityDbContext
+	public class HouseRentingDbContext : IdentityDbContext<ApplicationUser>
 	{
 		public HouseRentingDbContext(DbContextOptions<HouseRentingDbContext> options)
 			: base(options)
@@ -18,9 +18,9 @@ namespace HouseRentingSystemFromFile.Data
 
 		public DbSet<Agent> Agents { get; set; } = null!;
 
-		private IdentityUser AgentUser { get; set; } = null!;
+		private ApplicationUser AgentUser { get; set; } = null!;
 
-		private IdentityUser GuestUser { get; set; } = null!;
+		private ApplicationUser GuestUser { get; set; } = null!;
 
 		private Agent Agent { get; set; } = null!;
 
@@ -54,7 +54,7 @@ namespace HouseRentingSystemFromFile.Data
 				.OnDelete(DeleteBehavior.Restrict);
 
 			SeedUsers();
-			builder.Entity<IdentityUser>()
+			builder.Entity<ApplicationUser>()
 				.HasData(AgentUser, GuestUser);
 
 			SeedAgent();
@@ -68,37 +68,41 @@ namespace HouseRentingSystemFromFile.Data
 			SeedHouses();
 			builder.Entity<House>()
 				.HasData(FirstHouse, SecondHouse, ThirdHouse);
-			
+
 			base.OnModelCreating(builder);
 		}
 
 		private void SeedUsers()
 		{
-			var hasher = new PasswordHasher<IdentityUser>();
+			var hasher = new PasswordHasher<ApplicationUser>();
 
-			AgentUser = new IdentityUser()
+			AgentUser = new ApplicationUser()
 			{
 				Id = "dea12856-c198-4129-b3f3-b893d8395082",
 				UserName = "agent@mail.com",
 				NormalizedUserName = "agent@mail.com",
 				Email = "agent@mail.com",
-				NormalizedEmail = "agent@mail.com"
+				NormalizedEmail = "agent@mail.com",
+				FirstName = "Linda",
+				LastName = "Michaels"
 			};
 
 			AgentUser.PasswordHash =
 				 hasher.HashPassword(AgentUser, "agent123");
 
-			GuestUser = new IdentityUser()
+			GuestUser = new ApplicationUser()
 			{
 				Id = "6d5800ce-d726-4fc8-83d9-d6b3ac1f591e",
 				UserName = "guest@mail.com",
 				NormalizedUserName = "guest@mail.com",
 				Email = "guest@mail.com",
-				NormalizedEmail = "guest@mail.com"
+				NormalizedEmail = "guest@mail.com",
+				FirstName = "Teodor",
+				LastName = "Lesly"
 			};
 
 			GuestUser.PasswordHash =
-			hasher.HashPassword(AgentUser, "guest123");
+			hasher.HashPassword(GuestUser, "guest123");
 		}
 
 		private void SeedAgent()
