@@ -1,11 +1,13 @@
 using HouseRentingSystemFromFile.Contracts.Agent;
+using HouseRentingSystemFromFile.Contracts.ApplicationUser;
 using HouseRentingSystemFromFile.Contracts.House;
 using HouseRentingSystemFromFile.Contracts.Statistic;
 using HouseRentingSystemFromFile.Data;
+using HouseRentingSystemFromFile.Data.Models;
 using HouseRentingSystemFromFile.Services.Agent;
+using HouseRentingSystemFromFile.Services.ApplicationUser;
 using HouseRentingSystemFromFile.Services.House;
 using HouseRentingSystemFromFile.Services.Statistic;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,7 @@ builder.Services.AddDbContext<HouseRentingDbContext>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 	{
 		options.SignIn.RequireConfirmedAccount = false;
 		options.Password.RequireDigit = false;
@@ -34,6 +36,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddTransient<IHouseService, HouseService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<IStatisticService, StatisticService>();
+builder.Services.AddTransient<IApplicationUserService, ApplicationUserService>();
 
 var app = builder.Build();
 
