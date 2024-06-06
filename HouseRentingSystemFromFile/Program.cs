@@ -8,6 +8,7 @@ using HouseRentingSystemFromFile.Services.Agent;
 using HouseRentingSystemFromFile.Services.ApplicationUser;
 using HouseRentingSystemFromFile.Services.House;
 using HouseRentingSystemFromFile.Services.Statistic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 		options.Password.RequireUppercase = false;
 		options.Password.RequireNonAlphanumeric = false;
 	})
+	.AddRoles<IdentityRole>()
 	.AddEntityFrameworkStores<HouseRentingDbContext>();
 
 builder.Services.AddControllersWithViews(options =>
@@ -70,5 +72,7 @@ app.UseEndpoints(endpoints =>
 	endpoints.MapDefaultControllerRoute();
 	endpoints.MapRazorPages();
 });
+
+app.SeedAdmin();
 
 app.Run();
