@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using static HouseRentingSystemFromFile.Data.AdminUser;
 
 namespace HouseRentingSystemFromFile.Data
 {
@@ -21,6 +22,10 @@ namespace HouseRentingSystemFromFile.Data
 		private ApplicationUser AgentUser { get; set; } = null!;
 
 		private ApplicationUser GuestUser { get; set; } = null!;
+
+		private ApplicationUser AdminUser { get; set; } = null!;
+
+		private Agent AdminAgent { get; set; } = null!;
 
 		private Agent Agent { get; set; } = null!;
 
@@ -55,11 +60,11 @@ namespace HouseRentingSystemFromFile.Data
 
 			SeedUsers();
 			builder.Entity<ApplicationUser>()
-				.HasData(AgentUser, GuestUser);
+				.HasData(AgentUser, GuestUser, AdminUser);
 
 			SeedAgent();
 			builder.Entity<Agent>()
-				.HasData(Agent);
+				.HasData(Agent, AdminAgent);
 
 			SeedCategories();
 			builder.Entity<Category>()
@@ -103,6 +108,20 @@ namespace HouseRentingSystemFromFile.Data
 
 			GuestUser.PasswordHash =
 			hasher.HashPassword(GuestUser, "guest123");
+
+			AdminUser = new ApplicationUser()
+			{
+				Id = "8be94639-2c1d-437f-8df0-3eb5f4075427",
+				UserName = AdminEmail,
+				NormalizedUserName = AdminEmail,
+				Email = AdminEmail,
+				NormalizedEmail = AdminEmail,
+				FirstName = "Great",
+				LastName = "Admin"
+			};
+
+			AdminUser.PasswordHash =
+			hasher.HashPassword(AdminUser, "admin123");
 		}
 
 		private void SeedAgent()
@@ -112,6 +131,13 @@ namespace HouseRentingSystemFromFile.Data
 				Id = 1,
 				PhoneNumber = "+359888888888",
 				UserId = AgentUser.Id
+			};
+
+			AdminAgent = new Agent()
+			{
+				Id = 5,
+				PhoneNumber = "+359123456789",
+				UserId = AdminUser.Id
 			};
 		}
 
