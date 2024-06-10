@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using static HouseRentingSystemFromFile.Data.Data.AdminUser;
+using static HouseRentingSystemFromFile.Data.Data.AdminConstants;
 
 namespace HouseRentingSystemFromFile.Web.Infrastructure
 {

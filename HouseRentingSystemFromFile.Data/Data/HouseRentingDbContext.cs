@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using static HouseRentingSystemFromFile.Data.Data.AdminUser;
+using static HouseRentingSystemFromFile.Data.Data.AdminConstants;
 
 namespace HouseRentingSystemFromFile.Data.Data
 {
