@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HouseRentingSystemFromFile.Core.Models.Agent;
 using HouseRentingSystemFromFile.Core.Models.House;
+using HouseRentingSystemFromFile.Core.Models.User;
 using HouseRentingSystemFromFile.Data.Data.Models;
 
 namespace HouseRentingSystemFromFile.Core.Infrastructure
@@ -22,6 +23,14 @@ namespace HouseRentingSystemFromFile.Core.Infrastructure
 				.ForMember(a => a.Email, cfg => cfg.MapFrom(a => a.User.Email));
 
 			CreateMap<Category, HouseCategoryServiceModel>();
+
+			CreateMap<Agent, UserServiceModel>()
+				.ForMember(us => us.Email, cfg => cfg.MapFrom(ag => ag.User.Email))
+				.ForMember(us => us.FullName, cfg => cfg.MapFrom(ag => ag.User.FirstName + " " + ag.User.LastName));
+
+			CreateMap<ApplicationUser, UserServiceModel>()
+				.ForMember(us => us.PhoneNumber, cfg => cfg.MapFrom(us => string.Empty))
+				.ForMember(us => us.FullName, cfg => cfg.MapFrom(us => us.FirstName + " " + us.LastName));
 		}
 	}
 }
