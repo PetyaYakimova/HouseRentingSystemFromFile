@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HouseRentingSystemFromFile.Core.Models.Agent;
 using HouseRentingSystemFromFile.Core.Models.House;
+using HouseRentingSystemFromFile.Core.Models.Rent;
 using HouseRentingSystemFromFile.Core.Models.User;
 using HouseRentingSystemFromFile.Data.Data.Models;
 
@@ -18,6 +19,14 @@ namespace HouseRentingSystemFromFile.Core.Infrastructure
 				.ForMember(h => h.Category, cfg => cfg.MapFrom(h => h.Category.Name));
 
 			CreateMap<House, HouseIndexServiceModel>();
+
+			CreateMap<House, RentServiceModel>()
+				.ForMember(h => h.HouseTitle, cfg => cfg.MapFrom(h => h.Title))
+				.ForMember(h => h.HouseImageURL, cfg => cfg.MapFrom(h => h.ImageUrl))
+				.ForMember(h => h.AgentFullName, cfg => cfg.MapFrom(h => h.Agent.User.FirstName + " " + h.Agent.User.LastName))
+				.ForMember(h => h.AgentEmail, cfg => cfg.MapFrom(h => h.Agent.User.Email))
+				.ForMember(h => h.RenterFullName, cfg => cfg.MapFrom(h => h.Renter.FirstName + " " + h.Renter.LastName))
+				.ForMember(h => h.RenterEmail, cfg => cfg.MapFrom(h => h.Renter.Email));
 
 			CreateMap<Agent, AgentServiceModel>()
 				.ForMember(a => a.Email, cfg => cfg.MapFrom(a => a.User.Email));
