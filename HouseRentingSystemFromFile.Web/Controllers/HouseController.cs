@@ -6,6 +6,8 @@ using HouseRentingSystemFromFile.Web.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using static HouseRentingSystemFromFile.Data.Data.AdminConstants;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HouseRentingSystemFromFile.Web.Controllers
 {
@@ -15,12 +17,14 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 		private readonly IHouseService _houses;
 		private readonly IAgentService _agents;
 		private readonly IMapper _mapper;
+		private readonly IMemoryCache _cache;
 
-		public HouseController(IHouseService houses, IAgentService agents, IMapper mapper)
+		public HouseController(IHouseService houses, IAgentService agents, IMapper mapper, IMemoryCache cache)
 		{
 			_houses = houses;
 			_agents = agents;
 			_mapper = mapper;
+			_cache = cache;
 		}
 
 		[AllowAnonymous]
@@ -44,6 +48,10 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 
 		public async Task<IActionResult> Mine()
 		{
+			if (User.IsInRole(AdminRoleName))
+			{
+				return RedirectToAction(actionName: "mine", controllerName: "House", new { area = AreaName });
+			}
 			IEnumerable<HouseServiceModel> myHouses = null;
 
 			var userId = User.Id();
@@ -117,7 +125,9 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 			var newHouseId = await _houses.Create(model.Title, model.Address, model.Description, model.ImageUrl,
 				model.PricePerMonth, model.CategoryId, agentId);
 
-			return RedirectToAction(nameof(Details), new { id = newHouseId, information = model.GetInformation() });
+            TempData["message"] = "You have successfully added a house!";
+
+            return RedirectToAction(nameof(Details), new { id = newHouseId, information = model.GetInformation() });
 		}
 
 		public async Task<IActionResult> Edit(int id)
@@ -174,7 +184,9 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 			await _houses.Edit(id, house.Title, house.Address, house.Description, house.ImageUrl, house.PricePerMonth,
 				house.CategoryId);
 
-			return RedirectToAction(nameof(Details), new { id = id, information = house.GetInformation() });
+            TempData["message"] = "You have successfully edited a house!";
+
+            return RedirectToAction(nameof(Details), new { id = id, information = house.GetInformation() });
 		}
 
 		public async Task<IActionResult> Delete(int id)
@@ -213,7 +225,9 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 
 			await _houses.Delete(house.Id);
 
-			return RedirectToAction(nameof(All));
+            TempData["message"] = "You have successfully deleted a house!";
+
+            return RedirectToAction(nameof(All));
 		}
 
 		[HttpPost]
@@ -237,7 +251,11 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 
 			await _houses.Rent(id, User.Id());
 
-			return RedirectToAction(nameof(Mine));
+			_cache.Remove(RentsCacheKey);
+
+            TempData["message"] = "You have successfully rented a house!";
+
+            return RedirectToAction(nameof(Mine));
 		}
 
 		[HttpPost]
@@ -256,7 +274,11 @@ namespace HouseRentingSystemFromFile.Web.Controllers
 
 			await _houses.Leave(id);
 
-			return RedirectToAction(nameof(Mine));
+			_cache.Remove(RentsCacheKey);
+
+            TempData["message"] = "You have successfully left a house!";
+
+            return RedirectToAction(nameof(Mine));
 		}
 	}
 }
