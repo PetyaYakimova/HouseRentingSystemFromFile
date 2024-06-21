@@ -1,10 +1,12 @@
 using HouseRentingSystemFromFile.Core.Contracts.Agent;
 using HouseRentingSystemFromFile.Core.Contracts.ApplicationUser;
 using HouseRentingSystemFromFile.Core.Contracts.House;
+using HouseRentingSystemFromFile.Core.Contracts.Rent;
 using HouseRentingSystemFromFile.Core.Contracts.Statistic;
 using HouseRentingSystemFromFile.Core.Services.Agent;
 using HouseRentingSystemFromFile.Core.Services.ApplicationUser;
 using HouseRentingSystemFromFile.Core.Services.House;
+using HouseRentingSystemFromFile.Core.Services.Rent;
 using HouseRentingSystemFromFile.Core.Services.Statistic;
 using HouseRentingSystemFromFile.Data.Data;
 using HouseRentingSystemFromFile.Data.Data.Models;
@@ -40,10 +42,13 @@ builder.Services.AddTransient<IHouseService, HouseService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<IStatisticService, StatisticService>();
 builder.Services.AddTransient<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddTransient<IRentService, RentService>();
 
 builder.Services.AddAutoMapper(
 	typeof(IHouseService).Assembly,
 	typeof(HomeController).Assembly);
+
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
