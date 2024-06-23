@@ -2,10 +2,12 @@
 
 namespace HouseRentingSystemFromFile.Core.Contracts.ApplicationUser
 {
-    public interface IApplicationUserService
+    public interface IUserService
     {
         Task<string?> UserFullName(string userId);
 
         Task<IEnumerable<UserServiceModel>> All();
+
+        Task<bool> UserHasRents(string userId);
     }
 }
