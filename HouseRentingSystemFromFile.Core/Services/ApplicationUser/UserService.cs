@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystemFromFile.Core.Services.ApplicationUser
 {
-	public class ApplicationUserService : IApplicationUserService
+	public class UserService : IUserService
 	{
 		private readonly HouseRentingDbContext _data;
 		private readonly IMapper _mapper;
 
-		public ApplicationUserService(HouseRentingDbContext data, IMapper mapper)
+		public UserService(HouseRentingDbContext data, IMapper mapper)
 		{
 			_data = data;
 			_mapper = mapper;
@@ -53,5 +53,10 @@ namespace HouseRentingSystemFromFile.Core.Services.ApplicationUser
 
 			return user.FirstName + " " + user.LastName;
 		}
-	}
+
+        public async Task<bool> UserHasRents(string userId)
+        {
+            return await _data.Houses.AnyAsync(h => h.RenterId == userId);
+        }
+    }
 }
