@@ -12,11 +12,11 @@ namespace HouseRentingSystemFromFile.Core.Services.House
 	public class HouseService : IHouseService
 	{
 		private readonly HouseRentingDbContext _data;
-		private readonly IApplicationUserService _user;
+		private readonly IUserService _user;
 		private readonly IMapper _mapper;
 
 		public HouseService(HouseRentingDbContext data,
-			IApplicationUserService user,
+			IUserService user,
 			IMapper mapper)
 		{
 			_data = data;
