@@ -18,14 +18,9 @@ namespace HouseRentingSystemFromFile.Core.Services.Agent
             return await _data.Agents.AnyAsync(a => a.UserId == userId);
         }
 
-        public async Task<bool> UserWithPhoneNumberExists(string phoneNumber)
+        public async Task<bool> AgentWithPhoneNumberExists(string phoneNumber)
         {
             return await _data.Agents.AnyAsync(a => a.PhoneNumber == phoneNumber);
-        }
-
-        public async Task<bool> UserHasRents(string userId)
-        {
-            return await _data.Houses.AnyAsync(h => h.RenterId == userId);
         }
 
         public async Task Create(string userId, string phoneNumber)
