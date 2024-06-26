@@ -3,7 +3,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IAgentService agents
-@inject IApplicationUserService user
+@inject IUserService user
 
 <ul class="navbar-nav">
 	@if (SignInManager.IsSignedIn(User))
