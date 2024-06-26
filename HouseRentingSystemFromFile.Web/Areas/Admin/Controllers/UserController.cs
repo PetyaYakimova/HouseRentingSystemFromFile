@@ -8,10 +8,10 @@ namespace HouseRentingSystemFromFile.Web.Areas.Admin.Controllers
 {
 	public class UserController : AdminController
 	{
-		private readonly IApplicationUserService _users;
+		private readonly IUserService _users;
 		private readonly IMemoryCache _cache;
 
-		public UserController(IApplicationUserService users, IMemoryCache cache)
+		public UserController(IUserService users, IMemoryCache cache)
 		{
 			_users = users;
 			_cache = cache;
