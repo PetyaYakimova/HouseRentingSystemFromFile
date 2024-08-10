@@ -3,6 +3,7 @@ using HouseRentingSystemFromFile.Core.Contracts.House;
 using HouseRentingSystemFromFile.Core.Services.ApplicationUser;
 using HouseRentingSystemFromFile.Core.Services.House;
 using HouseRentingSystemFromFile.Data.Data.Models;
+using static System.Net.WebRequestMethods;
 
 namespace HouseRentingSystemFromFile.Tests.UnitTests
 {
@@ -176,6 +177,121 @@ namespace HouseRentingSystemFromFile.Tests.UnitTests
             Assert.IsNotNull(newHouseInDb);
             Assert.That(newHouseInDb.Title, Is.EqualTo(house.Title));
             Assert.That(newHouseInDb.Address, Is.EqualTo(changedAddress));
+        }
+
+        [Test]
+        public async Task Delete_ShouldDeleteHouseSuccessfully()
+        {
+            //Arrange
+            var house = new House()
+            {
+                Title = "New House For Delete",
+                Address = "Test, 201 Test",
+                Description = "This is a test description. This is a test desctiption. This is a test description.",
+                ImageUrl = "https://www.bhg.com/thmb/0Fg0imFSA6HVZMS2DFWPvjbYDoQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/white-modern-house-curved-patio-archway-c0a4a3b3-aa51b24d14d0464ea15d36e05aa85ac9.jpg"
+            };
+
+            await _data.Houses.AddAsync(house);
+            await _data.SaveChangesAsync();
+
+            var housesCountBefore = _data.Houses.Count();
+
+            //Act
+            await _houseService.Delete(house.Id);
+
+            //Assert
+            var housesCountAfter = _data.Houses.Count();
+            Assert.That(housesCountAfter, Is.EqualTo(housesCountBefore - 1));
+
+            var houseInDb = await _data.Houses.FindAsync(house.Id);
+            Assert.IsNull(houseInDb);
+        }
+
+        [Test]
+        public async Task IsRented_ShouldReturnCorrectTrue_WithValidId()
+        {
+            //Arrange
+            var houseId = RentedHouse.Id;
+
+            //Act
+            var result = await _houseService.IsRented(houseId);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public async Task Rent_ShouldRentHouseSuccessfully()
+        {
+            //Arrange
+            var house = new House()
+            {
+                Title = "New House For Rent",
+                Address = "Test, 201 Test",
+                Description = "This is a test description. This is a test desctiption. This is a test description.",
+                ImageUrl = "https://www.bhg.com/thmb/0Fg0imFSA6HVZMS2DFWPvjbYDoQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/white-modern-house-curved-patio-archway-c0a4a3b3-aa51b24d14d0464ea15d36e05aa85ac9.jpg"
+            };
+
+            await _data.Houses.AddAsync(house);
+            await _data.SaveChangesAsync();
+
+            var renterId = Renter.Id;
+
+            //Act
+            await _houseService.Rent(house.Id, renterId);
+
+            //Assert
+            var newHouseInDb = _data.Houses.Find(house.Id);
+            Assert.IsNotNull(newHouseInDb);
+            Assert.That(renterId, Is.EqualTo(house.RenterId));
+        }
+
+        [Test]
+        public async Task Leave_ShouldLeaveHouseSuccessfully()
+        {
+            //Arrange
+            var house = new House()
+            {
+                Title = "New House For Rent",
+                RenterId = Renter.Id,
+                Address = "Test, 201 Test",
+                Description = "This is a test description. This is a test desctiption. This is a test description.",
+                ImageUrl = "https://www.bhg.com/thmb/0Fg0imFSA6HVZMS2DFWPvjbYDoQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/white-modern-house-curved-patio-archway-c0a4a3b3-aa51b24d14d0464ea15d36e05aa85ac9.jpg"
+            };
+
+            await _data.Houses.AddAsync(house);
+            await _data.SaveChangesAsync();
+
+            //Act
+            await _houseService.Leave(house.Id);
+
+            //Assert
+            Assert.IsNull(house.RenterId);
+
+            var newHouseInDb = await _data.Houses.FindAsync(house.Id);
+            Assert.IsNotNull(newHouseInDb);
+            Assert.IsNull(newHouseInDb.RenterId);
+        }
+
+        [Test]
+        public async Task LastThreeHouses_ShouldReturnCorrectHouses()
+        {
+            //Arrange
+
+            //Act
+            var result = await _houseService.LastThreeHouses();
+
+            //Assert
+            var housesInDb = _data.Houses
+                .OrderByDescending(h => h.Id)
+                .Take(3);
+            Assert.That(result.Count(), Is.EqualTo(housesInDb.Count()));
+
+            var firstHouseInDb = housesInDb.FirstOrDefault();
+
+            var firstResultHouse = result.FirstOrDefault();
+            Assert.That(firstResultHouse.Id, Is.EqualTo(firstHouseInDb.Id));
+            Assert.That(firstResultHouse.Title, Is.EqualTo(firstHouseInDb.Title));
         }
     }
 }
