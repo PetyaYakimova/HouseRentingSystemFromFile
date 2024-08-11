@@ -41,7 +41,7 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddTransient<IHouseService, HouseService>();
 builder.Services.AddTransient<IAgentService, AgentService>();
 builder.Services.AddTransient<IStatisticService, StatisticService>();
-builder.Services.AddTransient<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRentService, RentService>();
 
 builder.Services.AddAutoMapper(
